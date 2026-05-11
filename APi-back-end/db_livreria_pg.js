@@ -1,5 +1,5 @@
 // Importamos o driver do Postgres
-import pg from 'pg';
+const pg = require('pg')
 const { Pool } = pg;
 
 // Criamos uma nova instância do Pool de conexões
@@ -8,7 +8,7 @@ const pool = new Pool({
     host: 'localhost',
     database: 'Biblioteca',
     password: 'senai',
-    port: 5433,
+    port: 5433
 });
 
 export async function postar_livros(titulo, autor, ano_publicacao, disponivel, req, res) {

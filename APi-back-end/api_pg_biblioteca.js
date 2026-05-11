@@ -1,5 +1,5 @@
 const express = require('express')
-const pool = './db_pg.js';
+const pool = './db_livreria_pg.js';
 const { postar_livros, buscar_livros, buscar_livros_id, atualizar_livros, excluir_livros } = require('./db_pg.js');
 
 const app = express()
