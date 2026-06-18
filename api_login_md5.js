@@ -1,95 +1,67 @@
 const express = require('express');
-const app = express();
-
-
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 const md5 = require('md5');
 
-let logins = [];
-
-
-app.post('/login', (req, res) => {
-    const { nome, email, senha } = req.body;
-    const senhaCriptografada = md5(senha);
-
-
-    logins.push({ nome, email, senha: senhaCriptografada });
-
-
-    res.json(logins);
-});
-
-
-app.get('/login', (req, res) => {
-    res.json(logins);
-});
-
-app.listen(3001, () => {
-    console.log('Servidor rodando em http://localhost:3001');
-});
-
-// tem problema
-/* onst md5 = require('md5');
-const express = require('express');
-
-
 const app = express();
 
-
+// Middlewares esenciales para leer JSON y formularios
+app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 let logins = [];
 
-
-
-
+// Crear usuario (POST)
 app.post('/login', (req, res) => {
     const { nome, email, senha } = req.body;
+    
+    // Validación básica
+    if (!nome || !email || !senha) {
+        return res.status(400).json({ error: "Todos los campos son obligatorios" });
+    }
+
     const senhaCriptografada = md5(senha);
-
-
-
-
     logins.push({ nome, email, senha: senhaCriptografada });
-
-
-
-
     res.json(logins);
 });
 
-
-
-
+// Listar usuarios (GET)
 app.get('/login', (req, res) => {
     res.json(logins);
 });
 
-
+// Actualizar usuario (PUT)
 app.put('/login', (req, res) => {
     const { nome, email, senha } = req.body;
-    const nova_tarefa = logins.find((t) => t.email === email);
+    
+    const usuario = logins.find((t) => t.email === email);
+    
+    if (!usuario) {
+        return res.status(404).json({ error: "Usuario no encontrado" });
+    }
 
+    // Actualiza los datos y encripta la nueva contraseña
+    usuario.nome = nome || usuario.nome;
+    if (senha) {
+        usuario.senha = md5(senha);
+    }
 
-    nova_tarefa.nome = nome;
-    nova_tarefa.senha = senha;
     res.json(logins);
+});
 
-
-})
-
-
+// Eliminar usuario (DELETE)
 app.delete('/login', (req, res) => {
     const { email } = req.body;
+    
+    const index = logins.findIndex(u => u.email === email);
+    
+    if (index === -1) {
+        return res.status(404).json({ error: "Usuario no encontrado" });
+    }
 
-
-    var index = logins.findIndex(u => u.email === email);
     logins.splice(index, 1);
-    res.json(logins)
-})
+    res.json(logins);
+});
 
-
+// Iniciar servidor
 app.listen(3001, () => {
-    console.log("http://localhost:3001/");
-})
-*/
+    console.log("Servidor rodando em http://localhost:3001");
+});
